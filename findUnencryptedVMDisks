@@ -1,0 +1,8 @@
+Resources // table against the query will run
+| where type == "microsoft.compute/disks" // different from log analytics, here the query happens against what MSFT calls "providers"
+// | where properties.encryptionSettingsCollection contains "true" //uncomment if you want to see easily your VMs encrypted
+| extend Encryption=todynamic(properties.encryptionSettingsCollection) // break down the column properties (json) to verify if the vm disk is encrypted or not
+| extend managedByArray = split(managedBy, "/") // break down the column by separating the information based on the symbom "/"
+| extend vmname = managedByArray[8] // get the 8th information separated by "/"
+| project vmname, Encryption["enabled"] // show those columns specified. you may want to run only the line 1 and 2 and see all information that is available
+
